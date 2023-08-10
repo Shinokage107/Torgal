@@ -5,6 +5,7 @@ module.exports = {
   data: new SlashCommandBuilder().setName("ffxiv").setDescription("Shows completion stats of your FFXIV character."),
 
   async execute(interaction) {
+    await interaction.deferReply();
     await ffxivCollect
       .get("users/" + interaction.user.id.toString())
       .then((response) => {
@@ -40,11 +41,11 @@ module.exports = {
             text: characterData.last_parsed,
           });
 
-        interaction.reply({ embeds: [showCaseEmbed] });
+        interaction.followUp({ embeds: [showCaseEmbed] });
       })
       .catch((exception) => {
-        if (exception.response.data.status == 404) interaction.reply(exception.response.data.error);
-        else interaction.reply("Something went wrong <:tickno:1139024530808000582>");
+        if (exception.response.data.status == 404) interaction.followUp(exception.response.data.error);
+        else interaction.followUp("Something went wrong <:tickno:1139024530808000582>");
       });
   },
 };
