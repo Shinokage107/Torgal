@@ -58,16 +58,20 @@ async function execute(interaction) {
         book.push(print);
       }
 
-      new Pagination()
-        .setPortal(interaction)
-        .setPageList(book)
-        .enableAutoButton()
-        .setProgressBar()
-        .enableAuthorIndependent()
-        .disableDisabledButtons()
-        .setTimeout(30000)
-        // .enablePrivateReply()
-        .paginate();
+      if (book.length > 0) {
+        new Pagination()
+          .setPortal(interaction)
+          .setPageList(book)
+          .enableAutoButton()
+          .setProgressBar()
+          .enableAuthorIndependent()
+          .disableDisabledButtons()
+          .setTimeout(30000)
+          // .enablePrivateReply()
+          .paginate();
+      } else {
+        interaction.followUp("Sry i was not able to find anything :c");
+      }
     })
     .catch((exception) => {
       interaction.followUp("Something went wrong <:tickno:1139024530808000582>");
