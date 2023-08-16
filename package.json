@@ -14,5 +14,5 @@
     "rest-api-handler": "^2.22.18",
     "util": "^0.12.5"
   },
-  "nodeVersion": "18.17.0"
+  "nodeVersion": "18.16.0"
 }
