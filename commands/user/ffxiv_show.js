@@ -75,6 +75,7 @@ module.exports = {
         const showCaseEmbed = new EmbedBuilder()
           .setColor(0x0099ff)
           .setTitle(characterData.name + "@" + characterData.server)
+          .setURL("https://ffxivcollect.com/characters/" + characterData.id)
           .setDescription("<@" + userId + "> " + verified + "\n" + completionType + completionPercentage + " %")
           .setThumbnail(characterData.avatar)
           .addFields({
