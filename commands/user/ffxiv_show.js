@@ -38,7 +38,14 @@ module.exports = {
         characterData = response;
         const decimalCount = 2;
 
-        if (interaction.options.getInteger("patch") == null) {
+        if (interaction.options.getInteger("patch") != null) {
+          patch = interaction.options.getInteger("patch");
+          mountPercentage = await fillterPercentage(userId, "mounts", patch, decimalCount);
+          achievementPercentage = await fillterPercentage(userId, "achievements", patch, decimalCount);
+          minionPercentage = await fillterPercentage(userId, "minions", patch, decimalCount);
+          bluePercentage = await fillterPercentage(userId, "spells", patch, decimalCount);
+          relicsPercentage = await fillterPercentage(userId, "relics", patch, decimalCount);
+        } else {
           mountPercentage = ((characterData.mounts.count / characterData.mounts.total) * 100).toFixed(decimalCount);
           minionPercentage = ((characterData.minions.count / characterData.minions.total) * 100).toFixed(decimalCount);
           achievementPercentage = ((characterData.achievements.count / characterData.achievements.total) * 100).toFixed(decimalCount);
@@ -49,15 +56,6 @@ module.exports = {
             100
           ).toFixed(decimalCount);
           orchestPersentage = ((characterData.orchestrions.count / characterData.orchestrions.total) * 100).toFixed(decimalCount);
-        }
-
-        if (interaction.options.getInteger("patch") != null) {
-          patch = interaction.options.getInteger("patch");
-          mountPercentage = await fillterPercentage(userId, "mounts", patch, decimalCount);
-          achievementPercentage = await fillterPercentage(userId, "achievements", patch, decimalCount);
-          minionPercentage = await fillterPercentage(userId, "minions", patch, decimalCount);
-          bluePercentage = await fillterPercentage(userId, "spells", patch, decimalCount);
-          relicsPercentage = await fillterPercentage(userId, "relics", patch, decimalCount);
         }
 
         var completionPercentage = (
