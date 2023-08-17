@@ -103,7 +103,7 @@ async function execute(interaction) {
         if (page.tradeable != null && page.tradeable) description += "<:gil:1139298538296180826> | ";
         if (page.owned != null) description += "Owned by: " + page.owned;
 
-        print.setTitle(page.name + " ( " + page.patch + " )");
+        print.setTitle(page.name + " ( " + page.patch + " ) #" + page.id);
         print.setDescription(description);
         print.setThumbnail(page.icon);
         print.setImage(page.image);

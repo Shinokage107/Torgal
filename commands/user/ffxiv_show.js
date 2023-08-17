@@ -2,7 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const { ffxivCollect } = require("../../api/api.js");
 const path = require("path");
 module.exports = {
-  type: "user",
+  type: "dev",
   data: new SlashCommandBuilder()
     .setName("ffxiv")
     .setDescription("Shows completion stats of your FFXIV character.")
@@ -24,6 +24,12 @@ module.exports = {
     await interaction.deferReply();
 
     var userId = interaction.options.getUser("user") != null ? interaction.options.getUser("user") : interaction.user.id;
+    var mountPercentage;
+    var minionPercentage;
+    var achievementPercentage;
+    var bluePercentage;
+    var relicsPercentage;
+    var orchestPersentage;
 
     await ffxivCollect
       .get("users/" + userId)
@@ -32,22 +38,21 @@ module.exports = {
         characterData = response;
         const decimalCount = 2;
 
-        var mountPercentage = ((characterData.mounts.count / characterData.mounts.total) * 100).toFixed(decimalCount);
-        var minionPercentage = ((characterData.minions.count / characterData.minions.total) * 100).toFixed(decimalCount);
-        var achievementPercentage = ((characterData.achievements.count / characterData.achievements.total) * 100).toFixed(decimalCount);
-        var bluePercentage = ((characterData.spells.count / characterData.spells.total) * 100).toFixed(decimalCount);
-        var relicsPercentage = (
-          ((characterData.relics.weapons.count + characterData.relics.tools.count + characterData.relics.armor.count) /
-            (characterData.relics.weapons.total + characterData.relics.tools.total + characterData.relics.armor.total)) *
-          100
-        ).toFixed(decimalCount);
-        var orchestPersentage = ((characterData.orchestrions.count / characterData.orchestrions.total) * 100).toFixed(decimalCount);
-
-        /// Completion calculations and filtering
+        if (interaction.options.getInteger("patch") == null) {
+          mountPercentage = ((characterData.mounts.count / characterData.mounts.total) * 100).toFixed(decimalCount);
+          minionPercentage = ((characterData.minions.count / characterData.minions.total) * 100).toFixed(decimalCount);
+          achievementPercentage = ((characterData.achievements.count / characterData.achievements.total) * 100).toFixed(decimalCount);
+          bluePercentage = ((characterData.spells.count / characterData.spells.total) * 100).toFixed(decimalCount);
+          relicsPercentage = (
+            ((characterData.relics.weapons.count + characterData.relics.tools.count + characterData.relics.armor.count) /
+              (characterData.relics.weapons.total + characterData.relics.tools.total + characterData.relics.armor.total)) *
+            100
+          ).toFixed(decimalCount);
+          orchestPersentage = ((characterData.orchestrions.count / characterData.orchestrions.total) * 100).toFixed(decimalCount);
+        }
 
         if (interaction.options.getInteger("patch") != null) {
           patch = interaction.options.getInteger("patch");
-
           mountPercentage = await fillterPercentage(userId, "mounts", patch, decimalCount);
           achievementPercentage = await fillterPercentage(userId, "achievements", patch, decimalCount);
           minionPercentage = await fillterPercentage(userId, "minions", patch, decimalCount);
@@ -124,7 +129,6 @@ module.exports = {
 
 async function fillterPercentage(userId, filter, condition, decimalCount) {
   var owned;
-  var missing;
   await ffxivCollect.get("users/" + userId + "/" + filter + "/owned").then((response) => {
     owned = response;
   });
@@ -137,22 +141,68 @@ async function fillterPercentage(userId, filter, condition, decimalCount) {
   var missingFiltered = 0;
 
   if (filter != "relics") {
-    owned.forEach((element) => {
-      if (Math.floor(element.patch) == condition) ownedFiltered++;
-    });
-    missing.forEach((element) => {
-      if (Math.floor(element.patch) == condition) missingFiltered++;
-    });
+    ownedFiltered = owned.filter((element) => Math.floor(element.patch) == condition).length;
+    missingFiltered = missing.filter((element) => Math.floor(element.patch) == condition).length;
   } else if (filter == "relics") {
-    owned.forEach((element) => {
-      if (Math.floor(element.type.expansion) == condition) ownedFiltered++;
-    });
-    missing.forEach((element) => {
-      if (Math.floor(element.type.expansion) == condition) missingFiltered++;
-    });
+    ownedFiltered = owned.filter((element) => Math.floor(element.type.expansion) == condition).length;
+    missingFiltered = missing.filter((element) => Math.floor(element.type.expansion) == condition).length;
   }
 
   var output = ((ownedFiltered / (ownedFiltered + missingFiltered)) * 100).toFixed(decimalCount);
 
   return isNaN(output) ? 100.0 : output;
 }
+
+// async function getPercentages(userId, filter, condition, decimalCount) {
+//   var userResult;
+//   await ffxivCollect.get("users/" + userId + "?ids=true").then((response) => {
+//     userResult = response;
+//   });
+
+//   ownedMounts = userResult.mounts.ids;
+//   mountsMinMax = await getPatchIDIndex(filter, condition);
+
+//   var filteredMounts = await filterIds(ownedMounts, mountsMinMax);
+
+//   console.log(filteredMounts);
+// }
+
+// async function filterIds(array, minMax) {
+//   var min = minMax[0] != null ? minMax[0] : 0;
+//   var max = minMax[1] != null ? minMax[1] : array[array.length - 1];
+
+//   console.log(min, max);
+
+//   const lowestHigh = array.find((n) => n > max - 1);
+//   console.log(lowestHigh);
+//   const within = (val) => val >= min && val < lowestHigh;
+
+//   return array.filter(within).length;
+// }
+
+// async function getPatchIDIndex(filter, index) {
+//   var mounts = [0, 50, 114, 170, 237];
+//   var minions = [0, 128, 237, 336, 420];
+//   var spells = [0, 0, 0, 50, 105];
+//   var relics = [0, 16067, 24723, 30751, 38715];
+//   var achievements = [0, 1208, 1883, 2377, 2980];
+
+//   switch (filter) {
+//     case "mounts":
+//       return [mounts[index - 2], mounts[index - 1]];
+//       break;
+//     case "minions":
+//       return [minions[index - 2], minions[index - 1]];
+//     case "spells":
+//       return [spells[index - 2], spells[index - 1]];
+//       break;
+//     case "relics":
+//       return [relics[index - 2], relics[index - 1]];
+//       break;
+//     case "achievemnts":
+//       return [achievements[index - 2], achievements[index - 1]];
+//       break;
+//     default:
+//       break;
+//   }
+// }
