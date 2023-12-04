@@ -2,8 +2,33 @@ require("dotenv").config();
 const fs = require("node:fs");
 const path = require("node:path");
 const { Client, Collection, Events, GatewayIntentBits } = require("discord.js");
+const CronJob = require("cron").CronJob;
+
+const theme = require("./commands/dev/theme.js");
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+
+var weeklyThemeRoll = new CronJob(
+  "0 0 12 * * 1",
+  function () {
+    console.log("interval 1");
+    theme.interval(1, client);
+  },
+  null,
+  true,
+  "America/Los_Angeles"
+);
+
+var monthlyThemeRoll = new CronJob(
+  "00 00 12 1 * *",
+  function () {
+    console.log("interval 2");
+    theme.interval(2, client);
+  },
+  null,
+  true,
+  "America/Los_Angeles"
+);
 
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, "commands");

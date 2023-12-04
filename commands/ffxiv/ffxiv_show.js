@@ -1,8 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const { ffxivCollect } = require("../../api/api.js");
+const { ffxivCollect } = require("../../src/api.js");
 const path = require("path");
 module.exports = {
-  type: "dev",
+  type: "user",
   data: new SlashCommandBuilder()
     .setName("ffxiv")
     .setDescription("Shows completion stats of your FFXIV character.")

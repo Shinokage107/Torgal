@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, ButtonStyle } = require("discord.js");
-const { ffxivCollect } = require("../../api/api.js");
+const { ffxivCollect } = require("../../src/api.js");
 const { Pagination } = require("@acegoal07/discordjs-pagination");
 module.exports = {
   type: "user",

@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder } = require("discord.js");
 const { Pagination } = require("@acegoal07/discordjs-pagination");
-const { lodestonenews } = require("../../api/api.js");
+const { lodestonenews } = require("../../src/api.js");
 module.exports = {
   type: "user",
   data: new SlashCommandBuilder()
