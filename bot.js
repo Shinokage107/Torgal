@@ -4,7 +4,7 @@ const path = require("node:path");
 const { Client, Collection, Events, GatewayIntentBits } = require("discord.js");
 const CronJob = require("cron").CronJob;
 
-const theme = require("./commands/dev/theme.js");
+const theme = require("./commands/user/theme.js");
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
