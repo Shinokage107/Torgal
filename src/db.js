@@ -1,5 +1,5 @@
 require("dotenv").config();
-const mysql = require("mysql");
+const mysql = require("mysql2/promise");
 const util = require("util");
 
 module.exports = {
@@ -11,15 +11,23 @@ module.exports = {
   deleteInterval: deleteInterval,
 };
 
-var conn = mysql.createConnection({
+const pool = mysql.createPool({
   host: process.env.DB_URL,
   port: process.env.DB_PORT,
   user: process.env.DB_USER,
   password: process.env.DB_PW,
   database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 20,
+  queueLimit: 0,
 });
 
-const query = util.promisify(conn.query).bind(conn);
+async function query(operation) {
+  const conn = await pool.getConnection();
+  var result = await conn.query(operation);
+  conn.release();
+  return Promise.resolve(result[0]);
+}
 
 async function check(table, column, value) {
   result = await query(`SELECT ${column} FROM ${table} WHERE ${column} = ${value}`);
@@ -55,4 +63,3 @@ async function deleteInterval(channel_id) {
 }
 
 module.exports.query = query;
-module.exports.conn = conn;

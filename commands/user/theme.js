@@ -33,14 +33,14 @@ async function execute(interaction) {
   if (interaction.options.getSubcommand() === "create_interval") {
     interval = interaction.options.getInteger("interval");
     result = await db.createInterval(interaction.channel.id, interval);
-    interaction.followUp("**Successfully** created an Interval for you :3");
+    await interaction.followUp("**Successfully** created an Interval for you :3");
   }
   if (interaction.options.getSubcommand() === "check") {
     result = await db.getRowBy("themeOnInterval_tbl", "channel_id", interaction.channel.id);
 
     if (result != false) {
       threadLink = "No active thread! Use **'/theme roll'** to create a new thread and theme";
-      interval = "undefined";
+      interval = "This channel does not have an active interval.";
 
       if (result.currentThread_id != 0) threadLink = `This is the latest thread -> <#${result.currentThread_id}>`;
 
@@ -48,14 +48,14 @@ async function execute(interaction) {
       if (result.interaction_id == 1) interval = "This channel has an active interval every **Monday**";
       if (result.interaction_id == 2) interval = "This channel has an active interval every **1st in a Month**";
 
-      interaction.followUp(`${interval} \n${threadLink}`);
+      await interaction.followUp(`${interval} \n${threadLink}`);
     } else {
-      interaction.followUp("I **was not** able to find any interval or an error occured.");
+      await interaction.followUp("I **was not** able to find any interval or an error occured.");
     }
   }
   if (interaction.options.getSubcommand() === "cancel_interval") {
     result = await db.deleteInterval(interaction.channel.id);
-    interaction.followUp("I **deleted** any Intervel connected to this channel :3");
+    await interaction.followUp("I **deleted** any Intervel connected to this channel :3");
   }
   if (interaction.options.getSubcommand() === "roll") {
     await rollTheme(interaction.channel);
