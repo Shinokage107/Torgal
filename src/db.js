@@ -1,6 +1,5 @@
 require("dotenv").config();
 const mysql = require("mysql2/promise");
-const util = require("util");
 
 module.exports = {
   check: check,

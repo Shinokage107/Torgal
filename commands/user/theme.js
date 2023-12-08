@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ButtonStyle, InteractionResponse, channelLink } = require("discord.js");
+const { SlashCommandBuilder, PermissionsBitField } = require("discord.js");
 const db = require("../../src/db.js");
 const themes = require("../../src/themes.json");
 
@@ -21,7 +21,8 @@ module.exports = {
     )
     .addSubcommand((subcommand) => subcommand.setName("check").setDescription("Checks if this channel has an Interval and if so wich one."))
     .addSubcommand((subcommand) => subcommand.setName("cancel_interval").setDescription("Cancels this channels Interval"))
-    .addSubcommand((subcommand) => subcommand.setName("roll").setDescription("Rolls a new Theme for this channel.")),
+    .addSubcommand((subcommand) => subcommand.setName("roll").setDescription("Rolls a new Theme for this channel."))
+    .setDMPermission(false),
 
   execute: execute,
   interval: interval,
@@ -31,10 +32,15 @@ async function execute(interaction) {
   await interaction.deferReply();
 
   if (interaction.options.getSubcommand() === "create_interval") {
-    interval = interaction.options.getInteger("interval");
-    result = await db.createInterval(interaction.channel.id, interval);
-    await interaction.followUp("**Successfully** created an Interval for you :3");
+    if (interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+      interval = interaction.options.getInteger("interval");
+      result = await db.createInterval(interaction.channel.id, interval);
+      await interaction.followUp("**Successfully** created an Interval for you :3");
+    } else {
+      await interaction.followUp("U do not have the Permission");
+    }
   }
+
   if (interaction.options.getSubcommand() === "check") {
     result = await db.getRowBy("themeOnInterval_tbl", "channel_id", interaction.channel.id);
 
@@ -53,14 +59,23 @@ async function execute(interaction) {
       await interaction.followUp("I **was not** able to find any interval or an error occured.");
     }
   }
+
   if (interaction.options.getSubcommand() === "cancel_interval") {
-    result = await db.deleteInterval(interaction.channel.id);
-    await interaction.followUp("I **deleted** any Intervel connected to this channel :3");
+    if (interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+      result = await db.deleteInterval(interaction.channel.id);
+      await interaction.followUp("I **deleted** any Intervel connected to this channel :3");
+    } else {
+      await interaction.followUp("U do not have the Permission");
+    }
   }
   if (interaction.options.getSubcommand() === "roll") {
-    await rollTheme(interaction.channel);
+    if (interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+      await rollTheme(interaction.channel);
 
-    await interaction.followUp(`The Theme for the following interval is: **"${randomTheme}"** \nCreated: **${date}**`);
+      await interaction.followUp(`The Theme for the following interval is: **"${randomTheme}"** \nCreated: **${date}**`);
+    } else {
+      await interaction.followUp("U do not have the Permission");
+    }
   }
 }
 
