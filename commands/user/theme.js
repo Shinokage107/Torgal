@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, PermissionsBitField } = require("discord.js");
 const db = require("../../src/db.js");
 const themes = require("../../src/themes.json");
+const { promises } = require("fs");
 
 module.exports = {
   type: "user",
@@ -46,13 +47,9 @@ async function execute(interaction) {
 
     if (result != false) {
       threadLink = "No active thread! Use **'/theme roll'** to create a new thread and theme";
-      let interval = "This channel does not have an active interval.";
+      let interval = await intervalToText(result.interval_id);
 
       if (result.currentThread_id != 0) threadLink = `This is the latest thread -> <#${result.currentThread_id}>`;
-
-      if (result.interval_id == 0) interval = "This channel does not have an active interval.";
-      if (result.interaction_id == 1) interval = "This channel has an active interval every **Monday**";
-      if (result.interaction_id == 2) interval = "This channel has an active interval every **1st in a Month**";
 
       await interaction.followUp(`${interval} \n${threadLink}`);
     } else {
@@ -100,6 +97,12 @@ async function rollTheme(channel) {
   });
 
   await db.createThread(channel.id, thread.id);
+}
+
+async function intervalToText(id) {
+  if (id == 0) return Promise.resolve("This channel does not have an active interval.");
+  if (id == 1) return Promise.resolve("This channel has an active interval every **Monday**");
+  if (id == 2) return Promise.resolve("This channel has an active interval every **1st in a Month**");
 }
 
 async function interval(id, client) {
