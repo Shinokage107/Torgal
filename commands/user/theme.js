@@ -33,7 +33,7 @@ async function execute(interaction) {
 
   if (interaction.options.getSubcommand() === "create_interval") {
     if (interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
-      interval = interaction.options.getInteger("interval");
+      const interval = interaction.options.getInteger("interval");
       result = await db.createInterval(interaction.channel.id, interval);
       await interaction.followUp("**Successfully** created an Interval for you :3");
     } else {
@@ -46,7 +46,7 @@ async function execute(interaction) {
 
     if (result != false) {
       threadLink = "No active thread! Use **'/theme roll'** to create a new thread and theme";
-      interval = "This channel does not have an active interval.";
+      let interval = "This channel does not have an active interval.";
 
       if (result.currentThread_id != 0) threadLink = `This is the latest thread -> <#${result.currentThread_id}>`;
 
