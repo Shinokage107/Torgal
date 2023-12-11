@@ -9,7 +9,7 @@ const theme = require("./commands/user/theme.js");
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 var weeklyThemeRoll = new CronJob(
-  "0 0 12 * * 1",
+  "0 12 * * MON",
   function () {
     console.log("interval 1");
     theme.interval(1, client);
@@ -20,7 +20,7 @@ var weeklyThemeRoll = new CronJob(
 );
 
 var monthlyThemeRoll = new CronJob(
-  "00 00 12 1 * *",
+  "0 12 1 * *",
   function () {
     console.log("interval 2");
     theme.interval(2, client);
