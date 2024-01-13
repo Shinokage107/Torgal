@@ -2,7 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder } = require("discord.js
 const { Pagination } = require("@acegoal07/discordjs-pagination");
 const { hl2b } = require("../../src/api.js");
 module.exports = {
-  type: "dev",
+  type: "user",
   data: new SlashCommandBuilder()
     .setName("hl2b")
     .setDescription("Ping pong command but only for dev")
