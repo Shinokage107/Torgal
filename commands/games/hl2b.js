@@ -21,9 +21,6 @@ async function execute(interaction) {
     .then((response) => {
       for (let index = 0; index < pages && index < response.length; index++) {
         const page = response[index];
-
-        console.log(page, page.imageUrl, page.name);
-
         var print = new EmbedBuilder();
 
         print.setTitle(page.name);
