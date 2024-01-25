@@ -22,6 +22,8 @@ for (const folder of commandFolders) {
         devCommands.push(command.data.toJSON());
       } else if (command.type == "user") {
         userCommands.push(command.data.toJSON());
+      } else if (command.type == "depricated") {
+        console.log(`[Deprciated] The command at ${filePath} is marked as being "depricated"`);
       }
     } else {
       console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);

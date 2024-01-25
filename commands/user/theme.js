@@ -4,7 +4,7 @@ const themes = require("../../src/themes.json");
 const { promises } = require("fs");
 
 module.exports = {
-  type: "user",
+  type: "depricated",
   data: new SlashCommandBuilder()
     .setName("theme")
     .setDescription("Configures Random Themes on Interval.")
