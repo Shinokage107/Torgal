@@ -40,8 +40,9 @@ async function scrapeOpenCriticGameData(url) {
     const $ = cheerio.load(response.data);
     const openCriticData = JSON.parse($("script[type=application/ld+json]:first").text());
     const openCriticMan = "https:" + $("[display=man] img").attr("src");
+    const openCriticGameLink = url;
 
-    return { openCriticData, openCriticMan };
+    return { openCriticData, openCriticMan, openCriticGameLink };
   } catch (error) {
     console.error("Error fetching OpenCritic data:", error.message);
     throw error;
@@ -72,8 +73,42 @@ async function getGameDataByName(name, max = 3, delay = 1000) {
   }
 }
 
-/* scrapeOpenCriticGameData("https://opencritic.com/game/15979/asgards-wrath-2").then((response) => {
+async function getGameDataFromFrontPage(delay = 1000) {
+  try {
+    const response = await axios.get(openCriticBaseUrl);
+    const $ = cheerio.load(response.data);
+
+    const popularGamesContainer = $("[title='Recently Released']");
+
+    if (popularGamesContainer.length === 0) {
+      console.error("Popular games container not found on the page.");
+      return [];
+    }
+
+    const linksArray = [];
+
+    popularGamesContainer.find("a.deco-none").each((index, element) => {
+      const link = $(element).attr("href");
+      linksArray.push(openCriticBaseUrl + link);
+    });
+
+    const detailedGameDataArray = await Promise.all(
+      linksArray.map(async (link) => {
+        const gameData = await scrapeOpenCriticGameData(link);
+        return gameData;
+      })
+    );
+
+    return detailedGameDataArray;
+  } catch (error) {
+    console.error("Error fetching and parsing the page:", error.message);
+    throw error;
+  }
+}
+
+/* getGameDataFromFrontPage().then((response) => {
   console.log(response);
 }); */
 
+module.exports.getGameDataFromFrontPage = getGameDataFromFrontPage;
 module.exports.getGameDataByName = getGameDataByName;
