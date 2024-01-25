@@ -2,7 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder, ButtonBuilder } = require("discord.js
 const { Pagination } = require("@acegoal07/discordjs-pagination");
 const { getGameDataByName, getGameDataFromFrontPage } = require("../../src/opencriticScraper.js");
 module.exports = {
-  type: "dev",
+  type: "user",
   data: new SlashCommandBuilder()
     .setName("openc")
     .setDescription("Open Critic Scores for Games. No input will give u recent releases")
