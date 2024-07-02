@@ -12,6 +12,7 @@ module.exports = {
         .setName("patch")
         .setDescription("Selected Patch")
         .addChoices(
+          { name: "Dawntrail", value: 7 },
           { name: "Endwalker", value: 6 },
           { name: "Shadowbringer", value: 5 },
           { name: "Stormblood", value: 4 },

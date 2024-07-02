@@ -6,6 +6,8 @@ const lodestonenews = new Api("https://na.lodestonenews.com", [new DefaultRespon
 
 const hl2b = new Api("https://hltb-api.vercel.app/api", [new DefaultResponseProcessor(DefaultApiException), onlyDataProcessor]);
 
+const xoembed = new Api("https://publish.twitter.com/oembed?url=", [new DefaultResponseProcessor(DefaultApiException)]);
+
 function onlyDataProcessor(response) {
   return Promise.resolve(response.data);
 }
@@ -13,3 +15,4 @@ function onlyDataProcessor(response) {
 module.exports.ffxivCollect = ffxivCollect;
 module.exports.lodestonenews = lodestonenews;
 module.exports.hl2b = hl2b;
+module.exports.xoembed = xoembed;
